@@ -13,7 +13,7 @@ let rocket = {
   src: "rocket.png",
 };
 
-let ufos = []
+let ufos = [];
 
 document.onkeydown = function (e) {
   if (e.keyCode == 32) {
@@ -53,13 +53,13 @@ function startGame() {
 }
 
 function createUfos() {
-ufos.push({
+  ufos.push({
     x: 500,
     y: 200,
     width: 100,
     height: 40,
     src: "spaceship.png",
-  };)
+  });
 }
 
 function update() {
@@ -83,4 +83,3 @@ function draw() {
   ctx.drawImage(rocket.img, rocket.x, rocket.y, rocket.width, rocket.height);
 
   requestAnimationFrame(draw);
-}
