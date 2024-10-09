@@ -49,37 +49,57 @@ function startGame() {
   loadImages();
   setInterval(update, 1000 / 25);
   setInterval(createUfos, 5000);
+  setInterval(checkForCollision, 1000 / 25);
   draw();
+  console.log("test");
+}
+
+function checkForCollision() {
+  ufos.forEach(function (ufo) {});
 }
 
 function createUfos() {
-  ufos.push({
-    x: 500,
+  let ufo = {
+    x: 800,
     y: 200,
     width: 100,
     height: 40,
     src: "spaceship.png",
-  });
+    img: new Image(),
+  };
+
+  ufo.img.src = ufo.src;
+
+  ufos.push(ufo);
 }
 
 function update() {
   if (KEY_UP) {
-    rocket.y -= 2;
+    rocket.y -= 4;
   }
 
   if (KEY_DOWN) {
-    rocket.y += 2;
+    rocket.y += 4;
   }
+
+  ufos.forEach(function (ufo) {
+    ufo.x -= 5;
+  });
 }
 
 function loadImages() {
   backgroundImage.src = "space.jpg";
   rocket.img = new Image();
   rocket.img.src = rocket.src;
-
+}
 
 function draw() {
   ctx.drawImage(backgroundImage, 0, 0);
   ctx.drawImage(rocket.img, rocket.x, rocket.y, rocket.width, rocket.height);
 
+  ufos.forEach(function (ufo) {
+    ctx.drawImage(ufo.img, ufo.x, ufo.y, ufo.width, ufo.height);
+  });
+
   requestAnimationFrame(draw);
+}
