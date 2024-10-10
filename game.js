@@ -56,7 +56,36 @@ function startGame() {
 
 function checkForCollision() {
   ufos.forEach(function (ufo) {
-    if(rocket.x + rocket.width > ufo.x && rocket.y + rocket.height > ufo.y && rocket.x < ufo.x && rocket.y <ufo.y)
+    if (
+      rocket.x < ufo.x + ufo.width &&
+      rocket.x + rocket.width > ufo.x &&
+      rocket.y < ufo.y + ufo.height &&
+      rocket.y + rocket.height > ufo.y
+    ) {
+      rocket.img.src = "boom.png";
+      console.log("Collision!!!");
+      ufos = ufos.filter((u) => u !== ufo);
+      // setTimeout(() => {
+      //   rocket.img.src = rocket.src;
+      // }, 500);
+    }
+
+    shots.forEach(function (shot) {
+      if (
+        shot.x + shot.width > ufo.x &&
+        shot.y + shot.height > ufo.y &&
+        shot.x < ufo.x &&
+        shot.y < ufo.y + ufo.height
+      ) {
+        ufo.hit = true;
+        ufo.img.src = "boom.png";
+        console.log("Collision!!!");
+
+        setTimeout(() => {
+          ufos = ufos.filter((u) => u != ufo);
+        }, 2000);
+      }
+    });
   });
 }
 
@@ -75,6 +104,22 @@ function createUfos() {
   ufos.push(ufo);
 }
 
+function checkForShoot() {
+  if (KEY_SPACE) {
+    let shot = {
+      x: rocket.x + 110,
+      y: rocket.y + 22,
+      width: 20,
+      height: 4,
+      src: "bullet.png",
+      img: new Image(),
+    };
+    shot.img.src = shot.src; // Laser-Bild wird geladen.
+
+    shots.push(shot);
+  }
+}
+
 function update() {
   if (KEY_UP) {
     rocket.y -= 4;
@@ -85,7 +130,13 @@ function update() {
   }
 
   ufos.forEach(function (ufo) {
-    ufo.x -= 5;
+    if (!ufo.hit) {
+      ufo.x -= 5;
+    }
+  });
+
+  shots.forEach(function (shot) {
+    shot.x += 15;
   });
 }
 
@@ -101,6 +152,10 @@ function draw() {
 
   ufos.forEach(function (ufo) {
     ctx.drawImage(ufo.img, ufo.x, ufo.y, ufo.width, ufo.height);
+  });
+
+  shots.forEach(function (shot) {
+    ctx.drawImage(shot.img, shot.x, shot.y, shot.width, shot.height);
   });
 
   requestAnimationFrame(draw);
