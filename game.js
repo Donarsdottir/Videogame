@@ -55,7 +55,9 @@ function startGame() {
 }
 
 function checkForCollision() {
-  ufos.forEach(function (ufo) {});
+  ufos.forEach(function (ufo) {
+    if(rocket.x + rocket.width > ufo.x && rocket.y + rocket.height > ufo.y && rocket.x < ufo.x && rocket.y <ufo.y)
+  });
 }
 
 function createUfos() {
