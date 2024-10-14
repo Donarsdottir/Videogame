@@ -21,6 +21,7 @@ let createUfoInterval;
 let updateInterval;
 let ufoSpeed = 5;
 let ufoCount = 0;
+let shotUfoCount = 0;
 
 document.onkeydown = function (e) {
   if (e.keyCode == 32) KEY_SPACE = true;
@@ -56,6 +57,7 @@ function resetGame() {
   rocket.img.src = "rocket.png";
   ufoSpeed = 5;
   ufoCount = 0;
+  shotUfoCount = 0;
   clearInterval(createUfoInterval);
   clearInterval(updateInterval);
   startGame();
@@ -92,6 +94,14 @@ function checkForCollision() {
         ufo.hit = true;
         ufo.img.src = "boom.png";
         console.log("Shot Collision!!!");
+
+        shotUfoCount++;
+
+        if (shotUfoCount >= 10) {
+          alert("You won!");
+          resetGame();
+        }
+
         setTimeout(() => {
           ufos = ufos.filter((u) => u !== ufo);
         }, 2000);
@@ -139,6 +149,11 @@ function update() {
       if (ufo.x + ufo.width < 0) {
         ufoCount++;
         ufos.splice(index, 1);
+
+        if (ufo.x + ufo.width < 0) {
+          ufoCount++; // Increase the UFO count
+          ufos.splice(index, 1); // Remove the UFO from the array
+        }
       }
 
       if (ufoCount >= 3) {
@@ -148,11 +163,28 @@ function update() {
     }
   });
 
-  shots.forEach(function (shot, index) {
-    shot.x += 15;
-    if (shot.x > canvas.width) {
-      shots.splice(index, 1);
+  shots.forEach(function (shot) {
+    if (
+      shot.x + shot.width > ufo.x &&
+      shot.x < ufo.x + ufo.width &&
+      shot.y + shot.height > ufo.y &&
+      shot.y < ufo.y + ufo.height
+    ) {
+      ufo.hit = true;
+      ufo.img.src = "boom.png";
+      shotUfoCount++;
+
+      if (shotUfoCount >= 10) {
+        alert("You won! You shot 10 UFOs!");
+        resetGame();
+      }
+
+      setTimeout(() => {
+        ufos = ufos.filter((u) => u !== ufo);
+      }, 2000);
     }
+    ufos.splice(ufoIndex, 1);
+    shots.splice(shotIndex, 1);
   });
 }
 
