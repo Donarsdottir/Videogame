@@ -147,8 +147,7 @@ function checkForCollision() {
           ufos.splice(ufoIndex, 1);
           shots.splice(shotIndex, 1);
         }
-      });
-    });
+      
   });
 }
 
@@ -206,7 +205,14 @@ function update() {
     }
   });
 
-  shots.forEach(function (shot) {
+  shots.forEach(function (shot, index) {
+
+    shot.x += 10; 
+
+    if (shot.x > canvas.width) {
+      shots.splice(index, 1); 
+    }
+
     if (
       shot.x + shot.width > ufo.x &&
       shot.x < ufo.x + ufo.width &&
