@@ -98,7 +98,7 @@ function checkForCollision() {
         Swal.fire({
           title: "Game over!",
           text: "You collided with a UFO!",
-          icon: "explanation"
+          icon: "error"
         });
         resetGame();
       }, 500);
