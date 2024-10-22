@@ -94,9 +94,12 @@ function checkForCollision() {
       rocket.img.src = "boom.png";
       gameOver = true;
       console.log("Rocket Collision!!!");
-      gameOver = true;
       setTimeout(() => {
-        alert("Game Over! You collided with a UFO!");
+        Swal.fire({
+          title: "Game over!",
+          text: "Ufo has been hit you",
+          icon: "question"
+        });
         resetGame();
       }, 500);
       ufos = ufos.filter((u) => u !== ufo);
@@ -133,12 +136,12 @@ function checkForCollision() {
             }, 500);
           }
 
-          setTimeout(() => {
-            if (shotUfoCount >= 10) {
-              alert("You won! You shot 10 UFOs!");
-              resetGame();
-            }
-          }, 1000);
+          // setTimeout(() => {
+          //   if (shotUfoCount >= 10) {
+          //     alert("You won! You shot 10 UFOs!");
+          //     resetGame();
+          //   }
+          // }, 1000);
 
           setTimeout(() => {
             ufos = ufos.filter((u) => u !== ufo);
