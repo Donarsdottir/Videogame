@@ -129,16 +129,15 @@ function checkForCollision() {
 
           score--;
 
-          if (shotUfoCount >= 10) {
-            setTimeout(() => {
-              Swal.fire({
-                title: "You won!",
-                text: "You shot 10 UFOs!",
-                icon: "explanation"
-              });
-              resetGame();
-            }, 500);
+          if (ufoCount >= 3) {
+            Swal.fire({
+              title: "Game Over!",
+              text: "Too many UFOs passed!",
+              icon: "error",
+            });
+            resetGame();
           }
+        }
 
           // setTimeout(() => {
           //   if (shotUfoCount >= 10) {
