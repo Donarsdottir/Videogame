@@ -130,7 +130,9 @@ function checkForCollision() {
           }
 
           // Immediately remove the UFO and shot after the collision
-          ufos.splice(ufoIndex, 1); // Remove the hit UFO
+          setTimeout(() => {
+            ufos.splice(ufoIndex, 1); // Remove the hit UFO
+          }, 1000);
           shots.splice(shotIndex, 1); // Remove the shot that hit the UFO
         }
       }
@@ -179,7 +181,10 @@ function update() {
   if (KEY_DOWN && rocket.y < canvas.height - rocket.height) rocket.y += 4;
 
   // Move the UFOs
-  ufos.forEach(function (ufo, index) {
+  // ufos.forEach(function (ufo, index) {
+  for (let i = 0; i < ufos.length; i++) {
+    let ufo = ufos[i];
+    let index = i;
     if (!ufo.hit) {
       ufo.x -= ufoSpeed;
 
@@ -189,15 +194,32 @@ function update() {
       }
 
       if (ufoCount >= 3) {
-        Swal.fire({
-          title: "Game Over!",
-          text: "Too many UFOs passed!",
-          icon: "error",
-        });
-        resetGame();
+        // gameOver = true;
+        document.body.classList.add("body");
+
+        document.getElementById("canvas").style.display = "none";
+        ufos.splice(index, 1);
+        ufoCount = -3;
+        document.getElementById("planet").classList.add("planet");
+        document.getElementById("spaceship").classList.add("spaceship");
+        setTimeout(() => {
+          Swal.fire({
+            title: "Game Over!",
+            text: "Too many UFOs passed!",
+            icon: "error",
+          });
+          document.getElementById("planet").classList.remove("planet");
+          document.getElementById("spaceship").classList.remove("spaceship");
+          document.getElementById("canvas").style.display = "block";
+          document.body.classList.remove("body");
+
+          resetGame();
+        }, 5000);
+        break;
       }
     }
-  });
+  }
+  // });
 
   // Move the shots
   shots.forEach(function (shot, index) {
@@ -238,3 +260,5 @@ function draw() {
 setInterval(() => {
   ufoSpeed += 0.5;
 }, 10000);
+
+startGame();
