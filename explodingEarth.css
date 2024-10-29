@@ -1,0 +1,107 @@
+body {
+  height: 100vh;
+  margin: 0;
+  background: rgb(255, 255, 255);
+  background: linear-gradient(
+    125deg,
+    #000059 0%,
+    #000059 25%,
+    #031f4b 50%,
+    black 75%,
+    black 100%
+  );
+  overflow: hidden;
+}
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 15rem;
+  width: 15rem;
+  border-radius: 50%;
+  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/332937/earth.jpg);
+  background-size: 225%;
+  background-position: center;
+  box-shadow: inset 10px 0px 12px -2px rgba(255, 255, 255, 0.2),
+    inset -70px 0px 50px 0px black, -5px 0px 10px -4px darkblue;
+  transform: rotate(23.26deg) translate(-50%, -50%);
+  animation: rotate 14s linear infinite;
+  z-index: 10;
+  overflow: hidden;
+}
+.planet:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 15rem;
+  width: 15rem;
+  overflow: hidden;
+  background-image: url("https://www.rici86.com/varie/fireball.jpg");
+  box-shadow: inset 10px 0px 12px -2px rgba(255, 255, 255, 0.2),
+    inset -7px 0px 5px 0px black, -5px 0px 10px -4px black;
+  background-size: 115%;
+  background-position: center;
+  animation: explosion 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite both;
+  animation-delay: 3s;
+  animation-iteration-count: 1;
+}
+.spaceship {
+  background-image: url("spaceship.png");
+  position: absolute;
+  top: -5rem;
+  right: -5rem;
+  height: 4rem;
+  width: 125px;
+  background-size: cover;
+  overflow: hidden;
+  animation: fall 3.5s ease-in-out 0.3s infinite;
+  animation-iteration-count: 1;
+  z-index: -1;
+}
+.spaceship::after {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  height: 20px;
+  width: 20px;
+  background-image: url("spaceship.png");
+  transform: rotate(180deg);
+}
+.spaceship::before {
+  content: "";
+  position: absolute;
+  bottom: 1rem;
+  left: 2rem;
+  height: 15px;
+  width: 15px;
+  background-image: url("spaceship.png");
+  transform: rotate(180deg);
+}
+
+@keyframes rotate {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+@keyframes fall {
+  100% {
+    transform-origin: top right;
+    transform: translate(-50vw, 50vh);
+  }
+}
+@keyframes explosion {
+  0% {
+    /* 		transform: translateY(-1000px) translateX(-1000px); */
+    height: 0;
+  }
+  30%,
+  100% {
+    /* 		transform: translateY(0) translateX(0); */
+    height: 15rem;
+    opacity: 1;
+  }
+}

@@ -23,8 +23,6 @@ let ufoSpeed = 5;
 let ufoCount = 0;
 let shotUfoCount = 0;
 let shotInterval;
-let score = 10;
-let ufoPassedCount = 3;
 let speedInterval;
 let canShoot = true;
 
@@ -69,9 +67,8 @@ function resetGame() {
   ufoSpeed = 5;
   ufoCount = 0;
   shotUfoCount = 0;
-  score = 10;
-  ufoPassedCount = 3;
 
+  // Clear intervals
   clearInterval(createUfoInterval);
   clearInterval(updateInterval);
   clearInterval(shotInterval);
@@ -84,7 +81,8 @@ function resetGame() {
 function checkForCollision() {
   if (gameOver) return;
 
-  ufos.forEach(function (ufo) {
+  ufos.forEach((ufo, ufoIndex) => {
+    // Rocket collision with UFO
     if (
       rocket.x < ufo.x + ufo.width &&
       rocket.x + rocket.width > ufo.x &&
@@ -98,14 +96,14 @@ function checkForCollision() {
         Swal.fire({
           title: "Game over!",
           text: "You collided with a UFO!",
-          icon: "error"
+          icon: "error",
         });
         resetGame();
       }, 500);
-      ufos = ufos.filter((u) => u !== ufo);
       ufos.splice(ufoIndex, 1); // Remove the UFO
     }
 
+    // Shot collision with UFO
     shots.forEach((shot, shotIndex) => {
       if (
         shot.x + shot.width > ufo.x &&
@@ -113,47 +111,30 @@ function checkForCollision() {
         shot.y + shot.height > ufo.y &&
         shot.y < ufo.y + ufo.height
       ) {
+        if (!ufo.hit) {
+          // Only count if the UFO hasn't been hit yet
+          ufo.hit = true;
+          ufo.img.src = "boom.png";
+          shotUfoCount++; // Only increment when a UFO is actually hit
 
-      ufos.forEach((ufo, ufoIndex) => {
-        if (
-          !ufo.hit &&
-          shot.x + shot.width > ufo.x &&
-          shot.x < ufo.x + ufo.width &&
-          shot.y + shot.height > ufo.y &&
-          shot.y < ufo.y + ufo.height
-        ) {
-          if (!ufo.hit) {  // Only count if the UFO hasn't been hit yet
-            ufo.hit = true;
-            ufo.img.src = "boom.png";
-            shotUfoCount++; // Only increment when a UFO is actually hit
-
-          score--;
-
-          if (ufoCount >= 3) {
-            Swal.fire({
-              title: "Game Over!",
-              text: "Too many UFOs passed!",
-              icon: "error",
-            });
-            resetGame();
+          // Check if player wins
+          if (shotUfoCount >= 10) {
+            setTimeout(() => {
+              Swal.fire({
+                title: "You won!",
+                text: "You shot 10 UFOs!",
+                icon: "explanation",
+              });
+              resetGame();
+            }, 500);
           }
+
+          // Immediately remove the UFO and shot after the collision
+          ufos.splice(ufoIndex, 1); // Remove the hit UFO
+          shots.splice(shotIndex, 1); // Remove the shot that hit the UFO
         }
-
-          // setTimeout(() => {
-          //   if (shotUfoCount >= 10) {
-          //     alert("You won! You shot 10 UFOs!");
-          //     resetGame();
-          //   }
-          // }, 1000);
-
-          setTimeout(() => {
-            ufos = ufos.filter((u) => u !== ufo);
-          }, 2000);
-
-          ufos.splice(ufoIndex, 1);
-          shots.splice(shotIndex, 1);
-        }
-      
+      }
+    });
   });
 }
 
@@ -172,6 +153,7 @@ function createUfos() {
 
 function checkForShoot() {
   if (KEY_SPACE && canShoot) {
+    // Create a new shot only when space is pressed and shooting is allowed
     let shot = {
       x: rocket.x + 110,
       y: rocket.y + 22,
@@ -183,24 +165,26 @@ function checkForShoot() {
     shot.img.src = shot.src;
     shots.push(shot);
 
+    // Set a cooldown to prevent immediate subsequent shots
     canShoot = false;
     setTimeout(() => {
       canShoot = true;
-    }, 300);
+    }, 300); // You can adjust this delay as needed for shot frequency
   }
 }
 
 function update() {
+  // Move the rocket
   if (KEY_UP && rocket.y > 0) rocket.y -= 4;
   if (KEY_DOWN && rocket.y < canvas.height - rocket.height) rocket.y += 4;
 
+  // Move the UFOs
   ufos.forEach(function (ufo, index) {
     if (!ufo.hit) {
       ufo.x -= ufoSpeed;
 
       if (ufo.x + ufo.width < 0) {
         ufoCount++;
-        ufoPassedCount--;
         ufos.splice(index, 1);
       }
 
@@ -208,46 +192,20 @@ function update() {
         Swal.fire({
           title: "Game Over!",
           text: "Too many UFOs passed!",
-          icon: "explanation"
+          icon: "error",
         });
         resetGame();
       }
     }
   });
 
+  // Move the shots
   shots.forEach(function (shot, index) {
-
-    shot.x += 10; 
+    shot.x += 10; // Increase the shot speed to move faster
 
     if (shot.x > canvas.width) {
-      shots.splice(index, 1); 
+      shots.splice(index, 1); // Remove shots that go off the screen
     }
-
-    if (
-      shot.x + shot.width > ufo.x &&
-      shot.x < ufo.x + ufo.width &&
-      shot.y + shot.height > ufo.y &&
-      shot.y < ufo.y + ufo.height
-    ) {
-      ufo.hit = true;
-      ufo.img.src = "boom.png";
-      shotUfoCount++;
-
-      if (shotUfoCount >= 10) {
-        Swal.fire({
-          title: "You won!",
-          text: "You shot 10 UFOs",
-          icon: "explanation"
-        });
-        resetGame();
-      }
-
-      setTimeout(() => {
-        ufos = ufos.filter((u) => u !== ufo);
-      }, 2000);
-    }
-    ufos.splice(ufoIndex, 1);
-    shots.splice(shotIndex, 1);
   });
 }
 
@@ -257,27 +215,24 @@ function loadImages() {
 }
 
 function draw() {
+  // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the background and rocket
   ctx.drawImage(backgroundImage, 0, 0);
   ctx.drawImage(rocket.img, rocket.x, rocket.y, rocket.width, rocket.height);
 
+  // Draw the UFOs
   ufos.forEach(function (ufo) {
     ctx.drawImage(ufo.img, ufo.x, ufo.y, ufo.width, ufo.height);
   });
 
+  // Draw the shots
   shots.forEach(function (shot) {
     ctx.drawImage(shot.img, shot.x, shot.y, shot.width, shot.height);
   });
 
-  ctx.fillStyle = "white";
-  ctx.font = "20px Arial";
-  ctx.fillText("Enemies: " + score, 10, 30);
-
-  ctx.fillStyle = "white";
-  ctx.font = "20px Arial";
-  ctx.fillText("UFOs Missed: " + ufoPassedCount, 10, 50);
-
-  requestAnimationFrame(draw);
+  requestAnimationFrame(draw); // Continue drawing on each frame
 }
 
 setInterval(() => {
